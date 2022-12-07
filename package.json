@@ -1,0 +1,31 @@
+{
+  "name": "projeto16-boardcamp",
+  "version": "1.0.0",
+  "description": "Projeto 16 da Driven - Boardcamp",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lcfernandez/driven-projeto16-boardcamp.git"
+  },
+  "keywords": [
+    "driven",
+    "boardcamp",
+    "api",
+    "node",
+    "express",
+    "javascript",
+    "sql",
+    "postgres",
+    "lcfernandez"
+  ],
+  "author": "lcfernandez",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/lcfernandez/driven-projeto16-boardcamp/issues"
+  },
+  "homepage": "https://github.com/lcfernandez/driven-projeto16-boardcamp#readme"
+}
