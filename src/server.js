@@ -1,3 +1,5 @@
+import categoriesRouter from "./routes/categoriesRouter.js";
+
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
@@ -8,6 +10,7 @@ const app = express();
 // configs
 app.use(cors());
 app.use(express.json());
+app.use(categoriesRouter)
 dotenv.config();
 
 // starts the server
