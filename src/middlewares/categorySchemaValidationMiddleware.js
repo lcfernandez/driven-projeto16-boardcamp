@@ -5,7 +5,7 @@ export function validateCategory(req, res, next) {
     const { error } = categorySchema.validate(category);
 
     if (error) {
-        return res.status(400).send(error);
+        return res.status(400).send(error.message);
     }
 
     next();
