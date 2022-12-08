@@ -1,4 +1,5 @@
 import categoriesRouter from "./routes/categoriesRouter.js";
+import gamesRouter from "./routes/gamesRouter.js";
 
 import cors from "cors";
 import dotenv from "dotenv";
@@ -11,6 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(categoriesRouter)
+app.use(gamesRouter);
 dotenv.config();
 
 // starts the server
