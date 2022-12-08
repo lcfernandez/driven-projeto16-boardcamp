@@ -12,7 +12,7 @@ export async function getCategories(req, res) {
 
 export async function postCategories(req, res) {
     try {
-        const category = await connection.query("SELECT * FROM categories WHERE name = $1;", [req.body.name]);
+        const category = await connection.query("SELECT name FROM categories WHERE name = $1;", [req.body.name]);
 
         if (category.rowCount !== 0) {
             return res.sendStatus(409);
