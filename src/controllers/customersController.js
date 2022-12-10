@@ -1,5 +1,30 @@
 import { connection } from "../database/database.js";
 
+export async function getCustomer(req, res) {
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+        return res.sendStatus(400);
+    }
+
+    try {
+        const customer = await connection.query(
+            `SELECT * FROM customers
+            WHERE id = $1;`,
+            [id]
+        );
+
+        if (customer.rowCount === 0) {
+            res.sendStatus(404);
+        } else {
+            res.send(customer.rows[0]);
+        }
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
+}
+
 export async function getCustomers(req, res) {
     const { cpf } = req.query;
 
