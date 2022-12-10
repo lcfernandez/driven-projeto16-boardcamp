@@ -1,4 +1,5 @@
 import categoriesRouter from "./routes/categoriesRouter.js";
+import customersRouter from "./routes/customersRouter.js";
 import gamesRouter from "./routes/gamesRouter.js";
 
 import cors from "cors";
@@ -11,7 +12,8 @@ const app = express();
 // configs
 app.use(cors());
 app.use(express.json());
-app.use(categoriesRouter)
+app.use(categoriesRouter);
+app.use(customersRouter);
 app.use(gamesRouter);
 dotenv.config();
 
