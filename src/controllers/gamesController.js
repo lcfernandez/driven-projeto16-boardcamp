@@ -1,14 +1,20 @@
 import { connection } from "../database/database.js";
 
 export async function getGames(req, res) {
+    const { name } = req.query;
+
     try {
         const games = await connection.query(
             `SELECT
                 games.*,
                 categories.name AS "categoryName"
             FROM games
-            JOIN categories ON games."categoryId" = categories.id;`
+            JOIN categories ON games."categoryId" = categories.id
+            ${name ? "WHERE LOWER(games.name) LIKE $1||'%'" : ""}
+            ;`,
+            name ? [name] : ""
         );
+
         res.send(games.rows);
     } catch (err) {
         console.error(err);
