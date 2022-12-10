@@ -9,7 +9,7 @@ export async function getCustomer(req, res) {
 
     try {
         const customer = await connection.query(
-            `SELECT * FROM customers
+            `SELECT *, birthday::text FROM customers
             WHERE id = $1;`,
             [id]
         );
@@ -30,7 +30,7 @@ export async function getCustomers(req, res) {
 
     try {
         const customers = await connection.query(
-            `SELECT * FROM customers
+            `SELECT *, birthday::text FROM customers
             ${cpf ? "WHERE cpf LIKE $1||'%'" : ""}
             ;`,
             cpf ? [cpf] : ""
