@@ -2,6 +2,32 @@ import { connection } from "../database/database.js";
 
 import dayjs from "dayjs";
 
+export async function getRentals(req, res) {
+    try {
+        const rentals = await connection.query(
+            `SELECT
+                rentals.*,
+                rentals."rentDate"::text,
+                JSON_BUILD_OBJECT('id', customers.id, 'name', customers.name) AS customer,
+                JSON_BUILD_OBJECT(
+                    'id', games.id,
+                    'name', games.name,
+                    'categoryId', games."categoryId",
+                    'categoryName', categories.name
+                ) AS game
+            FROM rentals
+            JOIN customers ON rentals."customerId" = customers.id
+            JOIN games ON rentals."gameId" = games.id
+            JOIN categories ON games."categoryId" = categories.id;`
+        );
+
+        res.send(rentals.rows);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
 export async function postRentals(req, res) {
     try {
         const { customerId, gameId, daysRented } = req.body;
