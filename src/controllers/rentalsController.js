@@ -3,6 +3,24 @@ import { connection } from "../database/database.js";
 import dayjs from "dayjs";
 
 export async function getRentals(req, res) {
+    const { customerId, gameId } = req.query;
+    const params = [];
+    let where = "WHERE ";
+
+    if (customerId) {
+        params.push(customerId);
+        where += `rentals."customerId" = $${params.length}`;
+    }
+
+    if (gameId) {
+        if (params.length) {
+            where += ` AND `;
+        }
+
+        params.push(gameId);
+        where += `rentals."gameId" = $${params.length}`
+    }
+
     try {
         const rentals = await connection.query(
             `SELECT
@@ -18,7 +36,10 @@ export async function getRentals(req, res) {
             FROM rentals
             JOIN customers ON rentals."customerId" = customers.id
             JOIN games ON rentals."gameId" = games.id
-            JOIN categories ON games."categoryId" = categories.id;`
+            JOIN categories ON games."categoryId" = categories.id
+            ${customerId || gameId ? where : ""}
+            ;`,
+            customerId || gameId ? params : ""
         );
 
         res.send(rentals.rows);
