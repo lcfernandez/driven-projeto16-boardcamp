@@ -1,4 +1,5 @@
 import {
+    deleteRentals,
     getRentals,
     postRentals,
     postRentalsReturn
@@ -9,6 +10,7 @@ import { Router } from "express";
 
 const router = Router();
 
+router.delete("/rentals/:id", deleteRentals);
 router.get("/rentals", getRentals);
 router.post("/rentals", validateRent, postRentals);
 router.post("/rentals/:id/return", postRentalsReturn);

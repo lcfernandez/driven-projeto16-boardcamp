@@ -2,6 +2,35 @@ import { connection } from "../database/database.js";
 
 import dayjs from "dayjs";
 
+export async function deleteRentals(req, res) {
+    const { id } = req.params;
+
+    try {
+        const rent = await connection.query(
+            "SELECT * FROM rentals WHERE id = $1;",
+            [id]
+        );
+
+        if (rent.rowCount === 0) {
+            return res.sendStatus(404);
+        }
+
+        if (!rent.rows[0].returnDate) {
+            return res.sendStatus(400);
+        }
+
+        await connection.query(
+            "DELETE FROM rentals WHERE id = $1;",
+            [id]
+        );
+        
+        res.sendStatus(200);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
+}
+
 export async function getRentals(req, res) {
     const { customerId, gameId } = req.query;
     const params = [];
@@ -14,7 +43,7 @@ export async function getRentals(req, res) {
 
     if (gameId) {
         if (params.length) {
-            where += ` AND `;
+            where += " AND ";
         }
 
         params.push(gameId);
@@ -55,7 +84,7 @@ export async function postRentals(req, res) {
         const { customerId, gameId, daysRented } = req.body;
 
         const customer = await connection.query(
-            `SELECT * FROM customers WHERE id = $1;`,
+            "SELECT * FROM customers WHERE id = $1;",
             [customerId]
         );
 
@@ -64,7 +93,7 @@ export async function postRentals(req, res) {
         }
 
         const game = await connection.query(
-            `SELECT * FROM games WHERE id = $1;`,
+            "SELECT * FROM games WHERE id = $1;",
             [gameId]
         );
 
@@ -73,7 +102,7 @@ export async function postRentals(req, res) {
         }
 
         const stock = await connection.query(
-            `SELECT * FROM rentals WHERE "gameId" = $1 AND "returnDate" IS NULL;`,
+            'SELECT * FROM rentals WHERE "gameId" = $1 AND "returnDate" IS NULL;',
             [gameId]
         );
 
@@ -110,7 +139,7 @@ export async function postRentalsReturn(req, res) {
 
     try {
         const rent = await connection.query(
-            `SELECT * FROM rentals WHERE id = $1;`,
+            "SELECT * FROM rentals WHERE id = $1;",
             [id]
         );
 
