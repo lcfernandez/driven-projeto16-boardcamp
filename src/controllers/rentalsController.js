@@ -26,6 +26,7 @@ export async function getRentals(req, res) {
             `SELECT
                 rentals.*,
                 rentals."rentDate"::text,
+                rentals."returnDate"::text,
                 JSON_BUILD_OBJECT('id', customers.id, 'name', customers.name) AS customer,
                 JSON_BUILD_OBJECT(
                     'id', games.id,
@@ -81,7 +82,7 @@ export async function postRentals(req, res) {
         }
         
         const rentDate = dayjs().format("YYYY-MM-DD");
-        const originalPrice = Number(game.rows[0].pricePerDay) * daysRented;
+        const originalPrice = game.rows[0].pricePerDay * daysRented;
 
         await connection.query(
             `INSERT INTO rentals (
@@ -98,6 +99,58 @@ export async function postRentals(req, res) {
         );
 
         res.sendStatus(201);
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
+}
+
+export async function postRentalsReturn(req, res) {
+    const { id } = req.params;
+
+    try {
+        const rent = await connection.query(
+            `SELECT * FROM rentals WHERE id = $1;`,
+            [id]
+        );
+
+        if (rent.rowCount === 0) {
+            return res.sendStatus(404);
+        }
+
+        if (rent.rows[0].returnDate) {
+            return res.sendStatus(400);
+        }
+
+        const returnDate = dayjs().format("YYYY-MM-DD");
+        const rentDate = dayjs(rent.rows[0].rentDate).format("YYYY-MM-DD");
+
+        let delayFee = 0;
+        
+        if (dayjs(returnDate).diff(rentDate, 'days') > rent.rows[0].daysRented) {
+            delayFee =
+                (dayjs(returnDate).diff(rentDate, 'days') - rent.rows[0].daysRented) *
+                (rent.rows[0].originalPrice / rent.rows[0].daysRented);
+        }
+
+        const params = [returnDate];
+        let set = 'SET "returnDate" = $1';
+
+        if (delayFee > 0) {
+            params.push(delayFee);
+            set += ', "delayFee" = $2';
+        }
+
+        params.push(id);
+
+        await connection.query(
+            `UPDATE rentals
+            ${set}
+            WHERE id = $${params.length};`,
+            params
+        );
+
+        res.sendStatus(200);
     } catch (err) {
         console.error(err);
         res.sendStatus(500);
