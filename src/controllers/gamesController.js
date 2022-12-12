@@ -27,7 +27,7 @@ export async function postGames(req, res) {
         const category = await connection.query("SELECT id FROM categories WHERE id = $1;", [req.body.categoryId]);
 
         if (category.rowCount === 0) {
-            res.sendStatus(400); 
+            res.sendStatus(400);
         } else {
             const game = await connection.query("SELECT name FROM games WHERE name = $1", [req.body.name]);
 
