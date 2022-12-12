@@ -29,7 +29,7 @@ export async function postGames(req, res) {
         if (category.rowCount === 0) {
             res.sendStatus(400);
         } else {
-            const game = await connection.query("SELECT name FROM games WHERE name = $1", [req.body.name]);
+            const game = await connection.query("SELECT name FROM games WHERE LOWER(name) = LOWER($1)", [req.body.name]);
 
             if (game.rowCount !== 0) {
                 res.sendStatus(409);
