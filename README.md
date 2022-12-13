@@ -2,11 +2,13 @@
 
 * **Projeto #16 - Boardcamp** do aluno Luiz Cláudio F. Fernandez, Turma 8 da Driven.
 
-* Projeto para ser executado localmente junto com o seu [front-end](https://github.com/bootcamp-ra/boardcamp-front).
+* **Deploy** (vulgo *Link da Titia*): https://projeto16-boardcamp-api.onrender.com
+
+* Front-end do projeto: https://github.com/bootcamp-ra/boardcamp-front.
 
 ---
 
-## Instruções
+## Instruções para rodar localmente
 
 * Certifique-se de ter o [Git](https://git-scm.com/), [Node](https://nodejs.org/en/) (ou [NVM](https://github.com/nvm-sh/nvm)) e [PostgreSQL](https://www.postgresql.org/download/) instalados e configurados.
 
@@ -40,14 +42,16 @@
 
     - Observação: não sendo especificado, a aplicação tentará rodar na porta 4000. Caso queira que outra porta seja utilizada, crie e preencha a varíavel `PORT` também no `.env`.
 
+* Altere no arquivo `./src/database/database.js` o valor de `ssl` de `true` para `false`.
+
 * Rode o projeto no ambiente de desenvolvimento com o comando:
 
-```
-npm run dev
-```
+    ```
+    npm run dev
+    ```
 
 * Um servidor local estará rodando na porta 4000 (ou outra especificada no `.env`) ao ser retornado a mensagem:
 
-```
-Server running on port 4000
-```
+    ```
+    Server running on port 4000
+    ```
