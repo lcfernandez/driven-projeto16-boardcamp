@@ -14,7 +14,7 @@ export async function postCategories(req, res) {
     const { name } = req.body;
 
     try {
-        const category = await connectionDB.query("SELECT name FROM categories WHERE LOWER(name) = LOWER($1);", [name]);
+        const category = await connectionDB.query("SELECT * FROM categories WHERE LOWER(name) = LOWER($1);", [name]);
 
         if (category.rowCount !== 0) {
             return res.sendStatus(409);

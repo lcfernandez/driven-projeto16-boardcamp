@@ -48,7 +48,7 @@ export async function postCustomers(req, res) {
 
     try {
         const customer = await connectionDB.query(
-            "SELECT cpf FROM customers WHERE cpf = $1;",
+            "SELECT * FROM customers WHERE cpf = $1;",
             [cpf]
         );
 
@@ -90,7 +90,7 @@ export async function putCustomers(req, res) {
         }
         
         const cpfExists = await connectionDB.query(
-            `SELECT cpf FROM customers
+            `SELECT * FROM customers
             WHERE cpf = $1 AND id <> $2;`,
             [cpf, id]
         );

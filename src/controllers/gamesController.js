@@ -25,12 +25,12 @@ export async function getGames(req, res) {
 export async function postGames(req, res) {
     const { name, image, stockTotal, categoryId, pricePerDay } = req.body;
     try {
-        const category = await connectionDB.query("SELECT id FROM categories WHERE id = $1;", [categoryId]);
+        const category = await connectionDB.query("SELECT * FROM categories WHERE id = $1;", [categoryId]);
 
         if (category.rowCount === 0) {
             res.sendStatus(400);
         } else {
-            const game = await connectionDB.query("SELECT name FROM games WHERE LOWER(name) = LOWER($1)", [name]);
+            const game = await connectionDB.query("SELECT * FROM games WHERE LOWER(name) = LOWER($1)", [name]);
 
             if (game.rowCount !== 0) {
                 res.sendStatus(409);
