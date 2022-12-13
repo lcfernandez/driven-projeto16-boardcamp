@@ -11,14 +11,16 @@ export async function getCategories(req, res) {
 }
 
 export async function postCategories(req, res) {
+    const { name } = req.body;
+
     try {
-        const category = await connection.query("SELECT name FROM categories WHERE LOWER(name) = LOWER($1);", [req.body.name]);
+        const category = await connection.query("SELECT name FROM categories WHERE LOWER(name) = LOWER($1);", [name]);
 
         if (category.rowCount !== 0) {
             return res.sendStatus(409);
         }
 
-        await connection.query("INSERT INTO categories (name) VALUES ($1);", [req.body.name]);
+        await connection.query("INSERT INTO categories (name) VALUES ($1);", [name]);
 
         res.sendStatus(201);
     } catch (err) {

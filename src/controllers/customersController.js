@@ -44,10 +44,12 @@ export async function getCustomers(req, res) {
 }
 
 export async function postCustomers(req, res) {
+    const { name, phone, cpf, birthday } = req.body;
+
     try {
         const customer = await connection.query(
             "SELECT cpf FROM customers WHERE cpf = $1;",
-            [req.body.cpf]
+            [cpf]
         );
 
         if (customer.rowCount !== 0) {
@@ -56,7 +58,7 @@ export async function postCustomers(req, res) {
             await connection.query(
                 `INSERT INTO customers (name, phone, cpf, birthday)
                 VALUES ($1, $2, $3, $4);`,
-                [req.body.name, req.body.phone, req.body.cpf, req.body.birthday]
+                [name, phone, cpf, birthday]
             );
 
             res.sendStatus(201);
@@ -74,6 +76,8 @@ export async function putCustomers(req, res) {
         return res.sendStatus(404);
     }
 
+    const { name, phone, cpf, birthday } = req.body;
+
     try {
         const customer = await connection.query(
             `SELECT * FROM customers
@@ -85,20 +89,20 @@ export async function putCustomers(req, res) {
             return res.sendStatus(404);
         }
         
-        const cpf = await connection.query(
+        const cpfExists = await connection.query(
             `SELECT cpf FROM customers
             WHERE cpf = $1 AND id <> $2;`,
-            [req.body.cpf, id]
+            [cpf, id]
         );
 
-        if (cpf.rowCount !== 0) {
+        if (cpfExists.rowCount !== 0) {
             res.sendStatus(409);
         } else {
             await connection.query(
                 `UPDATE customers
                 SET name = $1, phone = $2, cpf = $3, birthday = $4
                 WHERE id = $5;`,
-                [req.body.name, req.body.phone, req.body.cpf, req.body.birthday, id]
+                [name, phone, cpf, birthday, id]
             );
 
             res.sendStatus(200);
