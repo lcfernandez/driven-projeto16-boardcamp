@@ -28,21 +28,21 @@ export async function postGames(req, res) {
         const category = await connectionDB.query("SELECT * FROM categories WHERE id = $1;", [categoryId]);
 
         if (category.rowCount === 0) {
-            res.sendStatus(400);
-        } else {
-            const game = await connectionDB.query("SELECT * FROM games WHERE LOWER(name) = LOWER($1)", [name]);
-
-            if (game.rowCount !== 0) {
-                res.sendStatus(409);
-            } else {
-                await connectionDB.query(
-                    'INSERT INTO games (name, image, "stockTotal", "categoryId", "pricePerDay") VALUES ($1, $2, $3, $4, $5);',
-                    [name, image, stockTotal, categoryId, pricePerDay]
-                );
-
-                res.sendStatus(201);
-            }
+            return res.sendStatus(400);
         }
+        
+        const game = await connectionDB.query("SELECT * FROM games WHERE LOWER(name) = LOWER($1)", [name]);
+
+        if (game.rowCount !== 0) {
+            return res.sendStatus(409);
+        }
+
+        await connectionDB.query(
+            'INSERT INTO games (name, image, "stockTotal", "categoryId", "pricePerDay") VALUES ($1, $2, $3, $4, $5);',
+            [name, image, stockTotal, categoryId, pricePerDay]
+        );
+
+        res.sendStatus(201);
     } catch (err) {
         console.log(err);
         res.sendStatus(500);
