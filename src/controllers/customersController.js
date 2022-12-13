@@ -1,4 +1,4 @@
-import { connection } from "../database/database.js";
+import { connectionDB } from "../database/database.js";
 
 export async function getCustomer(req, res) {
     const id = Number(req.params.id);
@@ -8,7 +8,7 @@ export async function getCustomer(req, res) {
     }
 
     try {
-        const customer = await connection.query(
+        const customer = await connectionDB.query(
             `SELECT *, birthday::text FROM customers
             WHERE id = $1;`,
             [id]
@@ -29,7 +29,7 @@ export async function getCustomers(req, res) {
     const { cpf } = req.query;
 
     try {
-        const customers = await connection.query(
+        const customers = await connectionDB.query(
             `SELECT *, birthday::text FROM customers
             ${cpf ? "WHERE cpf LIKE $1||'%'" : ""}
             ;`,
@@ -47,7 +47,7 @@ export async function postCustomers(req, res) {
     const { name, phone, cpf, birthday } = req.body;
 
     try {
-        const customer = await connection.query(
+        const customer = await connectionDB.query(
             "SELECT cpf FROM customers WHERE cpf = $1;",
             [cpf]
         );
@@ -55,7 +55,7 @@ export async function postCustomers(req, res) {
         if (customer.rowCount !== 0) {
             res.sendStatus(409);
         } else {
-            await connection.query(
+            await connectionDB.query(
                 `INSERT INTO customers (name, phone, cpf, birthday)
                 VALUES ($1, $2, $3, $4);`,
                 [name, phone, cpf, birthday]
@@ -79,7 +79,7 @@ export async function putCustomers(req, res) {
     const { name, phone, cpf, birthday } = req.body;
 
     try {
-        const customer = await connection.query(
+        const customer = await connectionDB.query(
             `SELECT * FROM customers
             WHERE id = $1;`,
             [id]
@@ -89,7 +89,7 @@ export async function putCustomers(req, res) {
             return res.sendStatus(404);
         }
         
-        const cpfExists = await connection.query(
+        const cpfExists = await connectionDB.query(
             `SELECT cpf FROM customers
             WHERE cpf = $1 AND id <> $2;`,
             [cpf, id]
@@ -98,7 +98,7 @@ export async function putCustomers(req, res) {
         if (cpfExists.rowCount !== 0) {
             res.sendStatus(409);
         } else {
-            await connection.query(
+            await connectionDB.query(
                 `UPDATE customers
                 SET name = $1, phone = $2, cpf = $3, birthday = $4
                 WHERE id = $5;`,

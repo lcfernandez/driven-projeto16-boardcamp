@@ -1,10 +1,10 @@
-import { connection } from "../database/database.js";
+import { connectionDB } from "../database/database.js";
 
 export async function getGames(req, res) {
     const { name } = req.query;
 
     try {
-        const games = await connection.query(
+        const games = await connectionDB.query(
             `SELECT
                 games.*,
                 categories.name AS "categoryName"
@@ -25,17 +25,17 @@ export async function getGames(req, res) {
 export async function postGames(req, res) {
     const { name, image, stockTotal, categoryId, pricePerDay } = req.body;
     try {
-        const category = await connection.query("SELECT id FROM categories WHERE id = $1;", [categoryId]);
+        const category = await connectionDB.query("SELECT id FROM categories WHERE id = $1;", [categoryId]);
 
         if (category.rowCount === 0) {
             res.sendStatus(400);
         } else {
-            const game = await connection.query("SELECT name FROM games WHERE LOWER(name) = LOWER($1)", [name]);
+            const game = await connectionDB.query("SELECT name FROM games WHERE LOWER(name) = LOWER($1)", [name]);
 
             if (game.rowCount !== 0) {
                 res.sendStatus(409);
             } else {
-                await connection.query(
+                await connectionDB.query(
                     'INSERT INTO games (name, image, "stockTotal", "categoryId", "pricePerDay") VALUES ($1, $2, $3, $4, $5);',
                     [name, image, stockTotal, categoryId, pricePerDay]
                 );

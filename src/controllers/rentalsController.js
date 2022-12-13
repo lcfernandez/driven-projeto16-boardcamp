@@ -1,4 +1,4 @@
-import { connection } from "../database/database.js";
+import { connectionDB } from "../database/database.js";
 
 import dayjs from "dayjs";
 
@@ -6,7 +6,7 @@ export async function deleteRentals(req, res) {
     const { id } = req.params;
 
     try {
-        const rent = await connection.query(
+        const rent = await connectionDB.query(
             "SELECT * FROM rentals WHERE id = $1;",
             [id]
         );
@@ -19,7 +19,7 @@ export async function deleteRentals(req, res) {
             return res.sendStatus(400);
         }
 
-        await connection.query(
+        await connectionDB.query(
             "DELETE FROM rentals WHERE id = $1;",
             [id]
         );
@@ -51,7 +51,7 @@ export async function getRentals(req, res) {
     }
 
     try {
-        const rentals = await connection.query(
+        const rentals = await connectionDB.query(
             `SELECT
                 rentals.*,
                 rentals."rentDate"::text,
@@ -83,7 +83,7 @@ export async function postRentals(req, res) {
     try {
         const { customerId, gameId, daysRented } = req.body;
 
-        const customer = await connection.query(
+        const customer = await connectionDB.query(
             "SELECT * FROM customers WHERE id = $1;",
             [customerId]
         );
@@ -92,7 +92,7 @@ export async function postRentals(req, res) {
             return res.sendStatus(400);
         }
 
-        const game = await connection.query(
+        const game = await connectionDB.query(
             "SELECT * FROM games WHERE id = $1;",
             [gameId]
         );
@@ -101,7 +101,7 @@ export async function postRentals(req, res) {
             return res.sendStatus(400);
         }
 
-        const stock = await connection.query(
+        const stock = await connectionDB.query(
             'SELECT * FROM rentals WHERE "gameId" = $1 AND "returnDate" IS NULL;',
             [gameId]
         );
@@ -113,7 +113,7 @@ export async function postRentals(req, res) {
         const rentDate = dayjs().format("YYYY-MM-DD");
         const originalPrice = game.rows[0].pricePerDay * daysRented;
 
-        await connection.query(
+        await connectionDB.query(
             `INSERT INTO rentals (
                 "customerId",
                 "gameId",
@@ -138,7 +138,7 @@ export async function postRentalsReturn(req, res) {
     const { id } = req.params;
 
     try {
-        const rent = await connection.query(
+        const rent = await connectionDB.query(
             "SELECT * FROM rentals WHERE id = $1;",
             [id]
         );
@@ -172,7 +172,7 @@ export async function postRentalsReturn(req, res) {
 
         params.push(id);
 
-        await connection.query(
+        await connectionDB.query(
             `UPDATE rentals
             ${set}
             WHERE id = $${params.length};`,
