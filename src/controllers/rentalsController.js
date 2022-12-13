@@ -3,7 +3,11 @@ import { connectionDB } from "../database/database.js";
 import dayjs from "dayjs";
 
 export async function deleteRentals(req, res) {
-    const { id } = req.params;
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+        return res.sendStatus(404);
+    }
 
     try {
         const rent = await connectionDB.query(
@@ -135,7 +139,11 @@ export async function postRentals(req, res) {
 }
 
 export async function postRentalsReturn(req, res) {
-    const { id } = req.params;
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+        return res.sendStatus(404);
+    }
 
     try {
         const rent = await connectionDB.query(
